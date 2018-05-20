@@ -30,7 +30,7 @@
     </div>
     <div class="am-g">
         <div class="am-u-sm-4 am-u-sm-centered login-container">
-            <form class="am-form" action="/courseFeedback/showCourseFeedback.do" method="post">
+            <form class="am-form" action="../input-service.jsp" method="post">
                 <div class="am-form-group">
                     <label class="am-form-label">username:</label>
                     <input type="text" name="username" placeholder="type username" />

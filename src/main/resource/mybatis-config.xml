@@ -10,10 +10,11 @@
     <typeAliases>
         <package name="com.yao.bean"></package>
     </typeAliases>
-    <!--<plugins>
+    <!--用来注册插件-->
+    <plugins>
         <plugin interceptor="com.github.pagehelper.PageInterceptor" >
-            &lt;!&ndash;分页合理化，超过总页数显示最后一页，小于第一页显示第一页&ndash;&gt;
+            <!--分页合理化，超过总页数显示最后一页，小于第一页显示第一页-->
             <property name="reasonable" value="true"></property>
         </plugin>
-    </plugins>-->
+    </plugins>
 </configuration>

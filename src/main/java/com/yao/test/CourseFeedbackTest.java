@@ -1,6 +1,10 @@
 package com.yao.test;
 
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.google.gson.Gson;
 import com.yao.dao.CourseFeedbackMapper;
 import com.yao.entity.CourseFeedback;
 import com.yao.utils.ConstantValues;
@@ -35,9 +39,21 @@ public class CourseFeedbackTest {
 
     @Test
     public void testSelectAll(){
+        Page page = PageHelper.startPage(1,5);
         List<CourseFeedback> feedbacks = feedbackMapper.selectAllFeedback(ConstantValues.DESC);
         for (CourseFeedback feedback:feedbacks)
             System.out.println(feedback);
+        PageInfo pageInfo = new PageInfo(feedbacks,5);
+        System.out.println("总页数："+pageInfo.getPages());
+        System.out.println("当前页："+pageInfo.getPageNum());
+        System.out.println("当前页条数："+pageInfo.getPageSize());
+        System.out.println("是否还有下一页："+pageInfo.isHasNextPage());
+        System.out.println("是否是第一页："+pageInfo.isIsFirstPage());
+        int []pages = pageInfo.getNavigatepageNums();
+        for (int i:pages)
+            System.out.println(i);
+        /*for (CourseFeedback feedback:feedbacks)
+            System.out.println(feedback);*/
     }
 
     @Test
@@ -51,5 +67,12 @@ public class CourseFeedbackTest {
         List<CourseFeedback> feedbacks = feedbackMapper.selectFeedbackIsReader(ConstantValues.NONREADFEEDBACK,ConstantValues.ASC);
         for (CourseFeedback feedback:feedbacks)
             System.out.println(feedback);
+    }
+
+    @Test
+    public void test1(){
+        CourseFeedback courseFeedback = new CourseFeedback(1,"话不错",TimeUtils.dateToString(),0);
+        Gson gson = new Gson();
+        System.out.println(gson.toJson(courseFeedback));
     }
 }
