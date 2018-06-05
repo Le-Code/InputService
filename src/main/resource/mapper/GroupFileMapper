@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yao.dao.GroupFileMapper">
+
+    <resultMap id="groupFileInfoMap" type="com.yao.entity.GroupFileInfo">
+        <id column="id" property="id"/>
+        <result column="groupName" property="groupName"/>
+        <result column="groupPath" property="groupPath"/>
+        <result column="groupNum" property="groupNum"/>
+        <result column="createTime" property="createTime"/>
+        <result column="author" property="author"/>
+        <result column="originFile" property="originFile"/>
+        <result column="originFilePath" property="originFilePath"/>
+        <result column="groupDesc" property="groupDesc"/>
+    </resultMap>
+
+    <select id="findAllGroupFile" parameterType="java.lang.String" resultMap="groupFileInfoMap">
+      select * from tb_group
+      <if test="orderRule != null">
+          order by createTime #{orderRule}
+      </if>
+    </select>
+    
+    <select id="findGroupFileByName" parameterType="java.lang.String" resultMap="groupFileInfoMap">
+        select * from tb_group where groupName like %#{groupName}%;
+    </select>
+
+    <select id="getGroupInfoById" resultType="com.yao.entity.GroupFileInfo">
+        select * from tb_group where id = #{id};
+    </select>
+
+    <insert id="addGroupFile" parameterType="com.yao.entity.GroupFileInfo">
+        insert into tb_group (groupName,groupPath,groupNum,createTime,author,originFile,originFilePath,groupDesc)
+        values (#{groupName},#{groupPath},#{groupNum},#{createTime},#{author},#{originFile},#{originFilePath},#{groupDesc});
+    </insert>
+
+    <delete id="deleteGroupFile">
+        delete from tb_group where id = #{id};
+    </delete>
+</mapper>

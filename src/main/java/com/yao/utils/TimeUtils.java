@@ -14,5 +14,4 @@ public class TimeUtils {
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");//hh小时12小时制
         return format.format(date);
     }
-
 }

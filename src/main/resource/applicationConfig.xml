@@ -22,7 +22,7 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"></property>
         <property name="configLocation" value="classpath:mybatis-config.xml"></property>
-        <property name="mapperLocations" value="classpath:mapper/*.xml"></property>
+        <property name="mapperLocations" value="classpath:mapper/*"></property>
     </bean>
 
     <!--配置扫描器，将mybatis接口的实现加入到ioc容器中-->
@@ -60,12 +60,14 @@
         </tx:attributes>
     </tx:advice>
 
-    <!--&lt;!&ndash;springMVC上传文件时，需要配置MultipartResolver&ndash;&gt;
+    <!--多部分文件上传-->
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="defaultEncoding" value="utf-8" />
-        &lt;!&ndash;制定所上传文件不能炒作100MB&ndash;&gt;
         <property name="maxUploadSize" value="102400000" />
     </bean>
+
+    <!--&lt;!&ndash;springMVC上传文件时，需要配置MultipartResolver&ndash;&gt;
+
     &lt;!&ndash;springMVC在超出撒谎那个差U呢文件限制时，会抛出异常，
     改异常是springMVC在检查上传文件的信息时跑出来的，而且此时还没有进入到controller方法中&ndash;&gt;
     <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">

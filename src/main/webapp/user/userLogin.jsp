@@ -25,7 +25,7 @@
 <body>
     <div class="am-g head-container">
         <div class="am-u-sm-6 am-u-sm-centered">
-            <h1 style="text-align: center">E拼音后台登陆系统</h1>
+            <h1 style="text-align: center">E拼音后台</h1>
         </div>
     </div>
     <div class="am-g">
