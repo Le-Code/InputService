@@ -13,11 +13,19 @@ public interface GroupFileMapper {
     List<GroupFileInfo>findAllGroupFile(String orderRule);
 
     /**
-     * 根据词库名称来查找
+     * 根据词库名称来查找,模糊查找
      * @param groupName
      * @return
      */
-    List<GroupFileInfo>findGroupFileByName(String groupName);
+    List<GroupFileInfo>findGroupFileByNameReturnList(String groupName);
+
+    /**
+     * 按照词库名精确查找
+     * @param groupName
+     * @return
+     */
+    GroupFileInfo findGroupFileByNameReturnSingle(String groupName);
+
 
     /**
      * 根据id来进行查找词库名
@@ -37,4 +45,10 @@ public interface GroupFileMapper {
      * @param id
      */
     void deleteGroupFile(int id);
+
+    /**
+     * 更新词库信息
+     * @param info
+     */
+    void updateGroup(GroupFileInfo info);
 }

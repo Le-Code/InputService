@@ -121,7 +121,21 @@
 
             $("#submit").on("click",function () {
                 if ($("#checkBox").is(":checked")){
-                    console.log("ok");
+                    $.ajax({
+                        url:"${path}/group/findAllGroup",
+                        success:function (data) {
+                            var jsonObj;
+                            if (typeof data == 'string'){
+                                jsonObj = JSON.parse(data);
+                            }else{
+                                jsonObj = data;
+                            }
+                            $("select").html("<option value = ''>自定义</option>");
+                            for (var i = 0;i<jsonObj.length;i++){
+                                $("select").append("<option value = '"+jsonObj[i].groupName+"'>"+jsonObj[i].groupName+"</option>");
+                            }
+                        }
+                    });
                 }else{
                     alert("请先确认");
                     return false;
@@ -247,13 +261,11 @@
                         <label>词库名</label>
                         <select>
                             <option value="">自定义</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
                         </select>
                     </div>
                     <div class="am-form-group" id="input-groupName">
                         <label>词库名</label>
-                        <input type="text" name="groupName" placeholder="输入用户名" />
+                        <input type="text" name="groupName" placeholder="输入词库名" />
                     </div>
                     <div class="am-form-group">
                         <label>来源</label>

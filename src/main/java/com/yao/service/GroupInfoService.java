@@ -13,9 +13,16 @@ public interface GroupInfoService {
 
     /**
      * 根据词库名查找
+     * 模糊查找
      */
-    List<GroupFileInfo> findGroupFileByName(String groupName);
+    List<GroupFileInfo> findGroupFileByNameReturnList(String groupName);
 
+    /**
+     * 依据词库名精确查找
+     * @param groupName
+     * @return
+     */
+    GroupFileInfo findGroupFileByNameReturnSingle(String groupName);
     /**
      * 根据id查找
      * @param id
@@ -34,4 +41,10 @@ public interface GroupInfoService {
      * @param id
      */
     void deleteGroupFile(int id);
+
+    /**
+     * 更新词库
+     * @param info
+     */
+    void updateGroup(GroupFileInfo info);
 }

@@ -10,10 +10,12 @@ import com.yao.entity.GroupFileInfo;
 import com.yao.service.GroupInfoService;
 import com.yao.utils.CloseUtils;
 import com.yao.utils.TimeUtils;
+import com.yao.utils.TranslateUtils;
 import org.apdplat.word.WordSegmenter;
 import org.apdplat.word.segmentation.Word;
 import org.apdplat.word.tagging.PinyinTagging;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import sun.misc.OSEnvironment;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
@@ -47,15 +50,18 @@ public class GroupFileController {
     @Autowired
     private GroupInfoService groupInfoService;
 
-    @RequestMapping(value = "findAll")
+    @RequestMapping(value = "findAll",produces = {"text/html;charset=UTF-8;"})
     @ResponseBody
-    public String findAll(@RequestParam(defaultValue = "0") int pageNum, @RequestParam(defaultValue = "null") String orderRule, Model model){
+    public String findAll(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "null") String orderRule, Model model){
         PageHelper.startPage(pageNum,pageSize);
         Gson gson = new Gson();
         if (orderRule.equals("null"))
             orderRule = null;
         List<GroupFileInfo> list = groupInfoService.findAllGroupFile(orderRule);
         PageInfo pageInfo = new PageInfo(list,5);
+        if (pageNum>pageInfo.getTotal()||list.size()==0){
+            return "end";
+        }
         ContentWrapper<GroupFileInfo> content = new ContentWrapper<>(list,pageInfo);
         String json = gson.toJson(content);
         return json;
@@ -132,14 +138,96 @@ public class GroupFileController {
     @RequestMapping("saveManuallySingle")
     @ResponseBody
     public String saveManuallySingle(String chinese,String pinyin,String translate){
-        manuallyList.add(new CustomGroup(chinese,pinyin,translate,false));
+        manuallyList.add(new CustomGroup(chinese,pinyin.replaceAll(" ","'"),translate,false));
         return "success";
     }
 
+    @RequestMapping("getPyAndTranslateForWord")
+    @ResponseBody
+    public String getPyAndTranslateForWord(String chinese){
+        String translate = TranslateUtils.getTranslate(chinese,"auto","auto");
+        String pinyin = TranslateUtils.ToPinyin(chinese);
+        return pinyin+"@"+translate;
+    }
+
+    @RequestMapping(value = "findAllGroup",produces = {"text/html;charset=UTF-8;"})
+    @ResponseBody
+    public String findAllGroup(){
+        List<GroupFileInfo>groups = groupInfoService.findAllGroupFile(null);
+        Gson gson = new Gson();
+        return gson.toJson(groups);
+    }
+
+    @RequestMapping(value = "findGroup/{page}",produces = {"text/html;charset=UTF-8;"})
+    @ResponseBody
+    public String findGroupByPages(@PathVariable(value = "page") int page){
+        PageHelper.startPage(page,pageSize/2);
+        List<GroupFileInfo>groupFileInfos = groupInfoService.findAllGroupFile(null);
+        PageInfo<GroupFileInfo>pageInfo = new PageInfo<>(groupFileInfos,navigatesPages);
+        ContentWrapper<GroupFileInfo>wrapper = new ContentWrapper<>(groupFileInfos,pageInfo);
+        Gson gson = new Gson();
+        System.out.println(gson.toJson(wrapper));
+        return gson.toJson(wrapper);
+    }
 
     @RequestMapping("saveGroupFile")
     public String saveGroupFile(String groupName,String originFile,String groupDesc,HttpServletRequest request){
+        GroupFileInfo info = groupInfoService.findGroupFileByNameReturnSingle(groupName);
+        if (info==null){
+            createGroupFile(groupName,originFile,groupDesc,request,fileList);
+        }else{
+            appendGroupFile(info,request,fileList);
+        }
+        fileList.clear();
+        originFilePath = "";
+        return "operate_success";
+    }
+
+    /**
+     * 保存手动编写的
+     * @param groupName
+     * @param originFile
+     * @param groupDesc
+     * @param request
+     * @return
+     */
+    @RequestMapping("saveManuallyGroupFile")
+    public String saveManuallyGroupFile(String groupName,String originFile,String groupDesc,HttpServletRequest request){
+        if (manuallyList.size()==0){
+            request.setAttribute("errorMsg","你还没有添加词库");
+            return "operate_failure";
+        }
+        GroupFileInfo info = groupInfoService.findGroupFileByNameReturnSingle(groupName);
+        if (info==null){//重新创建一个文件
+            createGroupFile(groupName,originFile,groupDesc,request,manuallyList);
+        }else{//追加文件
+            appendGroupFile(info,request,manuallyList);
+        }
+        manuallyList.clear();
+        return "operate_success";
+    }
+
+    private void appendGroupFile(GroupFileInfo info,HttpServletRequest request,Collection<CustomGroup>data) {
         String realPath = request.getSession().getServletContext().getRealPath(root);
+        writeInfoFile(realPath+File.separator+info.getGroupPath(),data);
+        info.setCreateTime(TimeUtils.dateToString());
+        info.setGroupNum(info.getGroupNum()+data.size());
+        groupInfoService.updateGroup(info);
+    }
+
+    /**
+     * 创建一个新的文件
+     * @param groupName
+     * @param originFile
+     * @param groupDesc
+     * @param request
+     */
+    private void createGroupFile(String groupName, String originFile, String groupDesc, HttpServletRequest request,Collection<CustomGroup>data) {
+        String realPath = request.getSession().getServletContext().getRealPath(root);
+        File file = new File(realPath);
+        if (!file.exists())
+            file.mkdirs();
+        System.out.println(realPath);
         String groupPath = System.currentTimeMillis()+".txt";
         GroupFileInfo info = new GroupFileInfo();
         info.setAuthor("admin");
@@ -148,32 +236,33 @@ public class GroupFileController {
         info.setGroupDesc(groupDesc);
         info.setGroupName(groupName);
         info.setOriginFile(originFile);
-        info.setGroupNum(fileList.size());
-        info.setOriginFilePath(originFilePath);
-        writeInfoFile(realPath+File.separator+groupPath);
+        info.setGroupNum(data.size());
+        info.setOriginFilePath("");
+        writeInfoFile(realPath+File.separator+groupPath,data);
         groupInfoService.addGroupFile(info);
-        fileList.clear();
-        originFilePath = "";
-        return "operate_success";
     }
 
     /**
      * 将列表写到文件里面去
      * @param path
      */
-    private void writeInfoFile(String path) {
-        BufferedWriter writer = null;
+    private void writeInfoFile(String path,Collection<CustomGroup>data) {
+//        BufferedWriter writer = null;
+        OutputStream os = null;
         try{
-            writer = new BufferedWriter(new FileWriter(path));
-            for (CustomGroup group:fileList){
-                writer.write(group.getChinese()+"@"+group.getPinyin()+"@"+group.getTranslate());
-                writer.newLine();
-                writer.flush();
+//            writer = new BufferedWriter(new FileWriter(path,true));
+            os = new FileOutputStream(new File(path),true);
+            String buffer;
+            for (CustomGroup group:data){
+//                writer.write(group.getChinese()+"@"+group.getPinyin()+"@"+group.getTranslate());
+                buffer = group.getChinese()+"@"+group.getPinyin()+"@"+group.getTranslate()+"\r\n";
+                os.write(buffer.getBytes("utf-8"));
+                os.flush();
             }
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            CloseUtils.close(writer);
+            CloseUtils.close(os);
         }
     }
 
@@ -230,4 +319,6 @@ public class GroupFileController {
         }
         return set;
     }
+
+
 }

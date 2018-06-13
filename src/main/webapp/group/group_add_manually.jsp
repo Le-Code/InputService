@@ -16,6 +16,7 @@
     <link href="../css/amazeui.css" rel="stylesheet">
     <script src="../js/jquery.js"></script>
     <script src="../js/amazeui.js"></script>
+    <script src="../js/common.js"></script>
     <script>
 
         function submitOne(chinese,pinyin,translate){
@@ -38,21 +39,32 @@
         }
 
         function submitAll(){
-
+            $.ajax({
+                url:"${path}/group/findAllGroup",
+                success:function (data) {
+                    var jsonObj;
+                    if (typeof data == 'string'){
+                        jsonObj = JSON.parse(data);
+                    }else{
+                        jsonObj = data;
+                    }
+                    $("select").html("<option value = ''>自定义</option>");
+                    for (var i = 0;i<jsonObj.length;i++){
+                        $("select").append("<option value = '"+jsonObj[i].groupName+"'>"+jsonObj[i].groupName+"</option>");
+                    }
+                }
+            })
         }
 
         function manuallySubmit(){
             var radioVal = $("input[name = 'docInlineRadio']:checked").val();
             if (radioVal=="one"){
                 var regex = "[\u4e00-\u9fa5]+";
-                var chinese = $("input[name = 'chinese']").val();
-                var pinyin = $("input[name = 'pinyin']").val();
-                var translate = $("input[name = 'translate']").val();
-                //判断拼音是否符合标准
-                if (pinyin.indexOf("'")==-1){
-                    alert("拼音不符合标准");
-                    return ;
-                }else if (chinese==""||translate==""){
+                var chinese = trim($("input[name = 'chinese']").val());
+                var pinyin = trim($("input[name = 'pinyin']").val());
+                var translate = trim($("input[name = 'translate']").val());
+                //判断是否为空
+                if (chinese==""||translate==""||pinyin==""){
                     alert("存在文本框为空，请检查");
                     return ;
                 }else if (!chinese.match(regex)){
@@ -60,11 +72,51 @@
                     return;
                 } else
                     submitOne(chinese,pinyin,translate);
+                return false;
             }else{
                 submitAll();
             }
-            return false;
         }
+
+        $(function () {
+            $(document).on("change","#manuallyChineseInput",function () {
+                var chinese = $(this).val();
+                if(chinese.length<2){
+                    alert("汉字的长度小于2");
+                    return;
+                }
+                $.ajax({
+                    url:"${path}/group/getPyAndTranslateForWord",
+                    data:{"chinese":chinese},
+                    success:function (data) {
+                        if (data!="@"){
+                            var arr = data.split("@");
+                            $("#manuallyPinyinInput").val(arr[0]);
+                            $("#manuallyTranslateInput").val(arr[1]);
+                        }
+                    }
+                })
+            });
+
+            $("select").change(function () {
+                var val = $(this).val();
+                if (val!=""){
+                    $("#input-groupName").css("display","none");
+                }else{
+                    $("#input-groupName").css("display","block");
+                }
+                $("input[name = 'groupName']").val(val);
+            });
+
+            $(document).on("change","input[type = 'radio']",function () {
+                var val = $(this).val();
+                if (val=="one"){
+                    $("#submitOneManually").attr("data-am-modal","");
+                }else{
+                    $("#submitOneManually").attr("data-am-modal","{target: '#manually-popup'}");
+                }
+            })
+        })
     </script>
 </head>
 <body>
@@ -76,17 +128,17 @@
 
                     <div class="am-form-group">
                         <label>中文</label>
-                        <input type="text" name="chinese" class="" placeholder="输入中文汉字"/>
+                        <input type="text" id = "manuallyChineseInput" name="chinese" class="" placeholder="输入中文汉字"/>
                     </div>
 
                     <div class="am-form-group">
                         <label>拼音</label>
-                        <input type="text" name="pinyin" class="" placeholder="输入汉字拼音" />
+                        <input type="text" id = "manuallyPinyinInput" name="pinyin" class="" placeholder="输入汉字拼音" />
                     </div>
 
                     <div class="am-form-group">
                         <label>翻译</label>
-                        <input type="text" name="translate" class="" placeholder="输入汉字翻译" />
+                        <input type="text" id = "manuallyTranslateInput" name="translate" class="" placeholder="输入汉字翻译" />
                     </div>
                     <div class="am-form-group">
                         <label class="am-radio-inline">
@@ -96,7 +148,7 @@
                             <input type="radio" value="all" name="docInlineRadio" /> 全部
                         </label>
                     </div>
-                    <p><button id="submitOneManually" onclick="manuallySubmit()" type="button" class="am-btn am-btn-default">提交</button></p>
+                    <p><button id="submitOneManually" type="button" onclick="return manuallySubmit()"  class="am-btn am-btn-default">提交</button></p>
                 </fieldset>
             </form>
         </div>
@@ -104,6 +156,42 @@
             <table id = "showSubmit" class="am-table">
 
             </table>
+        </div>
+    </div>
+
+    <%--提交词库出现的悬浮窗--%>
+    <div class="am-popup" id="manually-popup">
+        <div class="am-popup-inner">
+            <div class="am-popup-hd">
+                <h4 class="am-popup-title">提交</h4>
+                <span data-am-modal-close
+                      class="am-close">&times;</span>
+            </div>
+            <div class="am-popup-bd">
+                <form class="am-form" action = "${path}/group/saveManuallyGroupFile" method="post">
+                    <fieldset>
+                        <div class="am-form-group">
+                            <label>词库名</label>
+                            <select>
+                                <option value="">自定义</option>
+                            </select>
+                        </div>
+                        <div class="am-form-group" id="input-groupName">
+                            <label>词库名</label>
+                            <input type="text" id="manually_groupName_input" name="groupName" placeholder="输入词库名" />
+                        </div>
+                        <div class="am-form-group">
+                            <label>来源</label>
+                            <input type="text" id="manually_originFile_input" name="originFile" placeholder="来自哪里（文章）"/>
+                        </div>
+                        <div class="am-form-group">
+                            <label>描述</label>
+                            <textarea id="manually_groupDesc_input" name="groupDesc" rows="5" placeholder="留下点描述吧"/>
+                        </div>
+                        <p><button type="submit" class="am-btn am-btn-default">提交</button> </p>
+                    </fieldset>
+                </form>
+            </div>
         </div>
     </div>
 </body>

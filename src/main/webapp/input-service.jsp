@@ -140,14 +140,15 @@
                 </div>
                 <div id="do-not-say-3" class="am-panel-collapse am-collapse">
                     <div class="am-panel-bd">
-                        <a class="option-a" href="#">查看所有用户</a>
+                        <a class="option-a"  href="#">所有用户</a>
+                        <hr/>
+                        <a class="option-a" url = "${path}/user/userInline.jsp" href="#">在线用户</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div id="show-detail" class="am-u-sm-10">
-        <%--<jsp:include page="feedback/CourseFeedbackShow.jsp"></jsp:include>--%>
     </div>
 </div>
 </body>

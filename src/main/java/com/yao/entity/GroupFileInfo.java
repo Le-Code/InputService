@@ -109,4 +109,19 @@ public class GroupFileInfo {
     public void setOriginFilePath(String originFilePath) {
         this.originFilePath = originFilePath;
     }
+
+    @Override
+    public String toString() {
+        return "GroupFileInfo{" +
+                "id=" + id +
+                ", groupName='" + groupName + '\'' +
+                ", groupPath='" + groupPath + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", author='" + author + '\'' +
+                ", groupNum=" + groupNum +
+                ", originFile='" + originFile + '\'' +
+                ", originFilePath='" + originFilePath + '\'' +
+                ", groupDesc='" + groupDesc + '\'' +
+                '}';
+    }
 }

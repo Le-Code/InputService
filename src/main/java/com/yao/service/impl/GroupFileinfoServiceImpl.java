@@ -21,9 +21,15 @@ public class GroupFileinfoServiceImpl implements GroupInfoService {
     }
 
     @Override
-    public List<GroupFileInfo> findGroupFileByName(String groupName) {
-        List<GroupFileInfo>list = mapper.findGroupFileByName(groupName);
+    public List<GroupFileInfo> findGroupFileByNameReturnList(String groupName) {
+        List<GroupFileInfo>list = mapper.findGroupFileByNameReturnList(groupName);
         return list;
+    }
+
+    @Override
+    public GroupFileInfo findGroupFileByNameReturnSingle(String groupName) {
+        GroupFileInfo info = mapper.findGroupFileByNameReturnSingle(groupName);
+        return info;
     }
 
     @Override
@@ -40,5 +46,10 @@ public class GroupFileinfoServiceImpl implements GroupInfoService {
     @Override
     public void deleteGroupFile(int id) {
         mapper.deleteGroupFile(id);
+    }
+
+    @Override
+    public void updateGroup(GroupFileInfo info) {
+        mapper.updateGroup(info);
     }
 }

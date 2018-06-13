@@ -6,39 +6,60 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page isELIgnored="false" %>
 <html>
 <head>
+    <%
+        request.setAttribute("path",request.getContextPath());
+    %>
     <title>group</title>
+    <link rel="stylesheet" href="../css/amazeui.css"/>
+    <script src="../js/jquery.js"></script>
+    <script src="../js/amazeui.js"></script>
+    <script src="../js/common.js"></script>
 
     <script type="text/javascript">
+
+        function showGroup() {
+            requestForOtherSpace("${path}/group/group_query.jsp",$("#container"));
+        }
+        
+        function addGroup() {
+            requestForOtherSpace("${path}/group/groupAdd.jsp",$("#container"));
+        }
+        
+        function handle(text){
+            if (text=="查看"){
+                showGroup();
+            }else{
+                addGroup();
+            }
+        }
+
         $(function () {
             $("#doc-form-file").on("change",function () {
                 var fileName = this.name;
                 $("#file-list").html(fileName);
+            });
+
+            $(document).on("click","#doc-topbar-collapse ul li",function () {
+                $("li").each(function () {
+                    $(this).attr("class","");
+                });
+                $(this).attr("class","am-active");
+                handle($(this).text());
             });
         })
     </script>
 </head>
 <body>
 <header class="am-topbar">
-    <h1 class="am-topbar-brand">
-        <a href="#">group</a>
-    </h1>
+    <h1 class="am-topbar-brand">groupManager</h1>
 
     <div class="am-collapse am-topbar-collapse" id="doc-topbar-collapse">
         <ul class="am-nav am-nav-pills am-topbar-nav">
             <li class="am-active"><a href="#">添加</a></li>
             <li><a href="#">查看</a></li>
-            <li class="am-dropdown" data-am-dropdown>
-                <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
-                    排序 <span class="am-icon-caret-down"></span>
-                </a>
-                <ul class="am-dropdown-content">
-                    <li class="am-dropdown-header">时间</li>
-                    <li class="am-active"><a href="#">升序</a></li>
-                    <li><a href="#">降序</a></li>
-                </ul>
-            </li>
         </ul>
 
         <form class="am-topbar-form am-topbar-left am-form-inline" role="search">

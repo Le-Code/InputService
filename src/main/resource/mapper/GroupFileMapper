@@ -21,8 +21,12 @@
       </if>
     </select>
     
-    <select id="findGroupFileByName" parameterType="java.lang.String" resultMap="groupFileInfoMap">
+    <select id="findGroupFileByNameReturnList" parameterType="java.lang.String" resultMap="groupFileInfoMap">
         select * from tb_group where groupName like %#{groupName}%;
+    </select>
+
+    <select id="findGroupFileByNameReturnSingle" parameterType="java.lang.String" resultType="com.yao.entity.GroupFileInfo">
+        select * from tb_group where groupName = #{groupName}
     </select>
 
     <select id="getGroupInfoById" resultType="com.yao.entity.GroupFileInfo">
@@ -37,4 +41,21 @@
     <delete id="deleteGroupFile">
         delete from tb_group where id = #{id};
     </delete>
+
+    <update id="updateGroup" parameterType="com.yao.entity.GroupFileInfo">
+        update tb_group
+        <set>
+            <if test="groupName!=null">groupName = #{groupName},</if>
+            <if test="groupPath!=null">groupPath = #{groupPath},</if>
+            <if test="createTime!=null">createTime = #{createTime},</if>
+            <if test="author!=null">author = #{author},</if>
+            <if test="groupNum!=null">groupNum = #{groupNum},</if>
+            <if test="originFile!=null">originFile = #{originFile},</if>
+            <if test="originFilePath!=null">originFilePath = #{originFilePath},</if>
+            <if test="groupDesc!=null">groupDesc = #{groupDesc}</if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
 </mapper>

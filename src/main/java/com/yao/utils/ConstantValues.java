@@ -21,5 +21,11 @@ public class ConstantValues {
      */
     public final static String DESC = "desc";
 
+    /**
+     * 服务器ip地址
+     */
+    public final static String IP = "192.168.1.101";
+    public final static int PORT = 8888;
+
 
 }
