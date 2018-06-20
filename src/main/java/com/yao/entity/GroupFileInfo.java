@@ -22,17 +22,9 @@ public class GroupFileInfo {
      */
     private String author;
     /**
-     * 词的数量
+     * 词库大小
      */
-    private long groupNum;
-    /**
-     * 来源文件的名称
-     */
-    private String originFile;
-    /**
-     * 来源文件的路径
-     */
-    private String originFilePath;
+    private String groupSize;
     /**
      * 词库的描述
      */
@@ -54,6 +46,14 @@ public class GroupFileInfo {
         this.groupName = groupName;
     }
 
+    public String getGroupPath() {
+        return groupPath;
+    }
+
+    public void setGroupPath(String groupPath) {
+        this.groupPath = groupPath;
+    }
+
     public String getCreateTime() {
         return createTime;
     }
@@ -70,20 +70,12 @@ public class GroupFileInfo {
         this.author = author;
     }
 
-    public long getGroupNum() {
-        return groupNum;
+    public String getGroupSize() {
+        return groupSize;
     }
 
-    public void setGroupNum(long groupNum) {
-        this.groupNum = groupNum;
-    }
-
-    public String getOriginFile() {
-        return originFile;
-    }
-
-    public void setOriginFile(String originFile) {
-        this.originFile = originFile;
+    public void setGroupSize(String groupSize) {
+        this.groupSize = groupSize;
     }
 
     public String getGroupDesc() {
@@ -92,36 +84,5 @@ public class GroupFileInfo {
 
     public void setGroupDesc(String groupDesc) {
         this.groupDesc = groupDesc;
-    }
-
-    public String getGroupPath() {
-        return groupPath;
-    }
-
-    public void setGroupPath(String groupPath) {
-        this.groupPath = groupPath;
-    }
-
-    public String getOriginFilePath() {
-        return originFilePath;
-    }
-
-    public void setOriginFilePath(String originFilePath) {
-        this.originFilePath = originFilePath;
-    }
-
-    @Override
-    public String toString() {
-        return "GroupFileInfo{" +
-                "id=" + id +
-                ", groupName='" + groupName + '\'' +
-                ", groupPath='" + groupPath + '\'' +
-                ", createTime='" + createTime + '\'' +
-                ", author='" + author + '\'' +
-                ", groupNum=" + groupNum +
-                ", originFile='" + originFile + '\'' +
-                ", originFilePath='" + originFilePath + '\'' +
-                ", groupDesc='" + groupDesc + '\'' +
-                '}';
     }
 }

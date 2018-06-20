@@ -6,11 +6,9 @@
         <id column="id" property="id"/>
         <result column="groupName" property="groupName"/>
         <result column="groupPath" property="groupPath"/>
-        <result column="groupNum" property="groupNum"/>
+        <result column="groupSize" property="groupSize"/>
         <result column="createTime" property="createTime"/>
         <result column="author" property="author"/>
-        <result column="originFile" property="originFile"/>
-        <result column="originFilePath" property="originFilePath"/>
         <result column="groupDesc" property="groupDesc"/>
     </resultMap>
 
@@ -34,8 +32,8 @@
     </select>
 
     <insert id="addGroupFile" parameterType="com.yao.entity.GroupFileInfo">
-        insert into tb_group (groupName,groupPath,groupNum,createTime,author,originFile,originFilePath,groupDesc)
-        values (#{groupName},#{groupPath},#{groupNum},#{createTime},#{author},#{originFile},#{originFilePath},#{groupDesc});
+        insert into tb_group (groupName,groupPath,groupSize,createTime,author,groupDesc)
+        values (#{groupName},#{groupPath},#{groupSize},#{createTime},#{author},#{groupDesc});
     </insert>
 
     <delete id="deleteGroupFile">
@@ -49,9 +47,7 @@
             <if test="groupPath!=null">groupPath = #{groupPath},</if>
             <if test="createTime!=null">createTime = #{createTime},</if>
             <if test="author!=null">author = #{author},</if>
-            <if test="groupNum!=null">groupNum = #{groupNum},</if>
-            <if test="originFile!=null">originFile = #{originFile},</if>
-            <if test="originFilePath!=null">originFilePath = #{originFilePath},</if>
+            <if test="groupSize!=null">groupSize = #{groupSize},</if>
             <if test="groupDesc!=null">groupDesc = #{groupDesc}</if>
         </set>
         <where>
