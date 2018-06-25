@@ -1,4 +1,4 @@
-<%--
+<%@ page import="org.springframework.web.servlet.mvc.support.RedirectAttributes" %><%--
   Created by IntelliJ IDEA.
   User: jerry
   Date: 2018/5/20
@@ -10,6 +10,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
     request.setAttribute("path",request.getContextPath());
+    if (request.getSession().getAttribute("manager")==null)
+        response.sendRedirect(request.getContextPath()+"/user/userLogin.jsp");
 %>
 <html>
 <head>
@@ -91,10 +93,10 @@
     <ul class="am-fr user">
         <li class="am-dropdown" data-am-dropdown>
             <a class="am-dropdown-toggle whole-font" data-am-dropdown-toggle href="javascript:;">
-                user <span class="am-icon am-icon-caret-down"></span>
+                ${manager} <span class="am-icon am-icon-caret-down"></span>
             </a>
             <ul class="am-dropdown-content">
-                <li><a class="option-a" href="#">注销</a></li>
+                <li><a href="${path}/logout">注销</a></li>
             </ul>
         </li>
     </ul>

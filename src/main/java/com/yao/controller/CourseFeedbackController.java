@@ -27,7 +27,7 @@ public class CourseFeedbackController {
     @Autowired
     private CourseFeedbackService courseFeedbackService;
 
-    @RequestMapping(value = "addCourseFeedback.do",method = RequestMethod.GET)
+    @RequestMapping(value = "addCourseFeedback.do",method = RequestMethod.GET,produces = {"text/html;charset=UTF-8"})
     @ResponseBody
     public String addFeedback(String info){
         CourseFeedback feedback = new CourseFeedback(info,TimeUtils.dateToString(),ConstantValues.NONREADFEEDBACK);
@@ -35,7 +35,7 @@ public class CourseFeedbackController {
         return "ok";
     }
 
-    @RequestMapping(value = "showCourseFeedback.do")
+    @RequestMapping(value = "showCourseFeedback.do",produces = {"text/html;charset=UTF-8"})
     public String showCourseFeedback(@RequestParam(defaultValue = "0") int pageNum, Model model){
         PageHelper.startPage(pageNum,pageSize);
         List<CourseFeedback> feedbacks = courseFeedbackService.getAllFeedback(null);

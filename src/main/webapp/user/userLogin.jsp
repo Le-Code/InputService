@@ -1,8 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
 <head>
+    <%
+        request.setAttribute("path",request.getContextPath());
+    %>
     <title>login</title>
     <link href="../css/amazeui.css" rel="stylesheet">
     <script src="../js/jquery.js"></script>
@@ -30,7 +34,7 @@
     </div>
     <div class="am-g">
         <div class="am-u-sm-4 am-u-sm-centered login-container">
-            <form class="am-form" action="../input-service.jsp" method="post">
+            <form class="am-form" action="${path}/login" method="post">
                 <div class="am-form-group">
                     <label class="am-form-label">username:</label>
                     <input type="text" name="username" placeholder="type username" />
@@ -40,7 +44,7 @@
                     <input type="password" name="password" placeholder="type password" />
                 </div>
                 <div class="am-form-group">
-                    <input type="submit" class="am-btn am-btn-success am-u-sm-2" value="login"/>
+                    <input type = "submit" class="am-btn am-btn-success am-u-sm-2" value="login"/>
                     <input type="reset" class="am-btn am-btn-secondary am-u-sm-2 am-u-end am-u-lg-offset-1" value="reset" />
                 </div>
             </form>
