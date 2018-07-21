@@ -2,9 +2,6 @@ package com.yao.entity;
 
 public class UserInline {
 
-
-    public static final int STATE_INLINE = 1;
-    public static final int STATE_OFFLINE = 0;
     public static final int CERTIFIED_USER = 1;
     public static final int UNCERTIFIED_USER = 0;
 
@@ -12,24 +9,29 @@ public class UserInline {
     /**
      * 在线用户ip
      */
-    private String ip;
+    private String userId;
     /**
-     * 状态
+     * 最近一次使用时间
      */
-    private int state;
+    private String lastUseTime;
     /**
      * 是否认证
      * 默认一开始注册都是认证用户
      */
-    private int certified;
+    private Integer certified;
+
+    /**
+     * 使用的版本
+     */
+    private String version;
 
     public UserInline() {
     }
 
-    public UserInline(String ip, int state, int certified) {
-        this.id = id;
-        this.ip = ip;
-        this.state = state;
+    public UserInline(String userId, String version,String lastUseTime, int certified) {
+        this.userId = userId;
+        this.version = version;
+        this.lastUseTime = lastUseTime;
         this.certified = certified;
     }
 
@@ -41,27 +43,35 @@ public class UserInline {
         this.id = id;
     }
 
-    public String getIp() {
-        return ip;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public int getState() {
-        return state;
+    public String getLastUseTime() {
+        return lastUseTime;
     }
 
-    public void setState(int state) {
-        this.state = state;
+    public void setLastUseTime(String lastUseTime) {
+        this.lastUseTime = lastUseTime;
     }
 
-    public int getCertified() {
+    public Integer getCertified() {
         return certified;
     }
 
-    public void setCertified(int certified) {
+    public void setCertified(Integer certified) {
         this.certified = certified;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

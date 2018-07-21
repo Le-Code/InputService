@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yao.dao.IMEVersionMapper">
+
+    <insert id="insertVersion" parameterType="com.yao.entity.IMEVersion">
+        insert into tb_version (version,path,upload_time) values (#{version},#{path},#{uploadTime})
+    </insert>
+
+    <select id="findLast" resultType="com.yao.entity.IMEVersion">
+        select * from tb_version order by upload_time desc limit 0,1
+    </select>
+</mapper>

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -27,9 +28,10 @@ public class CourseFeedbackController {
     @Autowired
     private CourseFeedbackService courseFeedbackService;
 
+    @CrossOrigin(maxAge = 3600)
     @RequestMapping(value = "addCourseFeedback.do",method = RequestMethod.GET,produces = {"text/html;charset=UTF-8"})
     @ResponseBody
-    public String addFeedback(String info){
+    public String addFeedback(String info, HttpServletRequest request){
         CourseFeedback feedback = new CourseFeedback(info,TimeUtils.dateToString(),ConstantValues.NONREADFEEDBACK);
         courseFeedbackService.addFeedback(feedback);
         return "ok";

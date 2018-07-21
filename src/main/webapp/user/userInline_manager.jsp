@@ -23,7 +23,31 @@
                 url:"${path}/userInline/forbidden/"+id,
                 success:function (data) {
                     if (data=="ok"){
-                        $("#userInline_manager_certified"+id).html("是否认证：非认证")
+                        $("#userInline_manager_certified"+id).html("是否认证：非认证");
+                        $("#userInlineCertifiedBtn"+id).html("恢复使用");
+                        $("#userInlineCertifiedBtn"+id).attr("onclick","allowUse("+id+")");
+                    }else{
+                        alert("操作失败");
+                        return;
+                    }
+                }
+            });
+        }
+
+        function userInline_download(id) {
+            console.log(id);
+            var _url="${path}/userInline/download/"+id;
+            window.open(_url);
+        }
+
+        function allowUse(id) {
+            $.ajax({
+                url:"${path}/userInline/allowUse/"+id,
+                success:function (data) {
+                    if (data=="ok"){
+                        $("#userInline_manager_certified"+id).html("是否认证：认证");
+                        $("#userInlineCertifiedBtn" + id).html("停止使用");
+                        $("#userInlineCertifiedBtn" + id).attr("onclick", "forbidden(" + id + ")");
                     }else{
                         alert("操作失败");
                         return;
@@ -35,16 +59,22 @@
         //创造一个显示
         function userInline_manager_createSingleUser(index,obj) {
             var div = $("<div class='am-vertical-align'></div>");
-            div.css("height","85px");
+            div.css("height","105px");
             if (index%2==0){
                 div.css("background","#beccc9");
             }
-            var divWrapper1 = $("<div class = 'am-u-sm-11 am-vertical-align-middle'></div>");
-            divWrapper1.append("<div class = 'am-u-sm-12'>用户ip："+obj.ip+"</div>");
-            divWrapper1.append("<div class = 'am-u-sm-12'>是否在线："+(obj.state==1?"在线":"不在线")+"</div>");
+            var divWrapper1 = $("<div class = 'am-u-sm-10 am-vertical-align-middle'></div>");
+            divWrapper1.append("<div class = 'am-u-sm-12'>用户id："+obj.userId+"</div>");
+            divWrapper1.append("<div class = 'am-u-sm-12'>版本："+obj.version+"</div>");
+            divWrapper1.append("<div class = 'am-u-sm-12'>上次使用时间："+obj.lastUseTime+"</div>");
             divWrapper1.append("<div id = 'userInline_manager_certified"+obj.id+"' class = 'am-u-sm-12'>是否认证："+(obj.certified==1?"认证":"非认证")+"</div>");
             var divWrapper2 = $("<div class = 'am-vertical-align-middle'></div>");
-            divWrapper2.append("<button class='am-btn am-btn-warning userInline_manager_forbidden' onclick = 'forbidden("+obj.id+")' id = '"+obj.id+"'>停止使用</a>");
+            if (obj.certified==1){
+                divWrapper2.append("<button class='am-btn am-btn-warning userInline_manager_forbidden' onclick = 'forbidden("+obj.id+")' id = 'userInlineCertifiedBtn"+obj.id+"'>停止使用</button>");
+            } else{
+                divWrapper2.append("<button class='am-btn am-btn-warning userInline_manager_forbidden' onclick = 'allowUse("+obj.id+")' id = 'userInlineCertifiedBtn"+obj.id+"'>恢复使用</button>");
+            }
+            divWrapper2.append("<button class='am-btn am-btn-success' onclick = 'userInline_download(\""+obj.userId+"\")' id = 'userInlineCertifiedBtn"+obj.id+"'>使用记录</button>");
             div.append(divWrapper1);
             div.append(divWrapper2);
             $("#userInline_manager_show").append(div);
@@ -74,6 +104,15 @@
                 nextLi.attr("class","am-disabled");
             nextLi.append("<a href = '#'>&raquo;</a>");
             $("#userInline_manager_pagination").append(nextLi);
+            var li = $("<li pageNum = ''></li>");
+            li.append("<span>"+pageInfo.total+"条</span>");
+            $("#userInline_manager_pagination").append(li);
+            li = li = $("<li pageNum = ''></li>");
+            li.append("<span>"+pageInfo.pages+"页</span>");
+            $("#userInline_manager_pagination").append(li);
+            li = $("<li pageNum = ''></li>");
+            li.append("<input style='width: 35px' type = 'text' name = 'userInline_manager_page_input'/><button id='userInline_manager_go_page' class='am-btn am-btn-success am-btn-xs'>跳转</button> ");
+            $("#userInline_manager_pagination").append(li);
         }
 
 
@@ -106,15 +145,18 @@
 
         $(function () {
             userInline_manager_request_user(1);
-            $("#userInline_manager_pagination li").on("click",function () {
+            $(document).on("click","#userInline_manager_pagination li",function () {
                 var pageNum = $(this).attr("pageNum");
-                query_request_group(pageNum);
+                if (pageNum!='')
+                    userInline_manager_request_user(pageNum);
             });
 
-            /*$(document).on("click",".userInline_manager_forbidden",function () {
-                var id = $(this).attr("id");
-
-            })*/
+            $(document).on("click","#userInline_manager_go_page",function () {
+               var pageNum = $("input[name = 'userInline_manager_page_input']").val();
+               if (pageNum!=''){
+                   userInline_manager_request_user(pageNum);
+               }
+            });
         })
     </script>
 </head>

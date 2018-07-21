@@ -334,7 +334,7 @@ public class GroupFileController {
     private String getDataSize(long size) {
         DecimalFormat formater = new DecimalFormat("####.00");
         if (size < 1024) {
-            return size + "bytes";
+            return size*1.0/1000 + "KB";
         } else if (size < 1024 * 1024) {
             float kbsize = size / 1024f;
             return formater.format(kbsize) + "KB";

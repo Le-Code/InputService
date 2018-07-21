@@ -1,6 +1,8 @@
 package com.yao.dao;
 
 import com.yao.entity.UserInline;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -11,13 +13,6 @@ public interface UserInlineMapper {
      * @return
      */
     UserInline findUserById(int id);
-
-    /**
-     * 按照状态查找
-     * @param state
-     * @return
-     */
-    List<UserInline>findUserByState(int state);
 
     /**
      * 按照是否认证进行查找
@@ -33,11 +28,11 @@ public interface UserInlineMapper {
     List<UserInline>findAllUser();
 
     /**
-     * 按照ip进行查找
-     * @param ip
+     * 按照userId进行查找
+     * @param userId
      * @return
      */
-    UserInline findUserByIp(String ip);
+    UserInline findUserByUserId(String userId);
 
     /**
      * 更新user
@@ -50,4 +45,18 @@ public interface UserInlineMapper {
      * @param user
      */
     void insertUser(UserInline user);
+
+    /**
+     * 得到一个用户的使用时间
+     * @param userId
+     * @return
+     */
+    List<String>getUserUseTime(String userId);
+
+    /**
+     * 添加用户的一个使用时间
+     * @param userId
+     * @return
+     */
+    Integer insertUseTime(@Param("userId") String userId, @Param("curTime") String curTime);
 }

@@ -4,37 +4,56 @@
 
     <resultMap id="userInline" type="com.yao.entity.UserInline">
         <id column="id" property="id"/>
-        <result column="ip" property="ip"/>
-        <result column="state" property="state"/>
+        <result column="user_id" property="userId"/>
+        <result column="version" property="version"/>
+        <result column="last_useTime" property="lastUseTime"/>
         <result column="certified" property="certified"/>
     </resultMap>
 
+    <resultMap id="usr_useTime" type="java.lang.String">
+        <result column="use_time" property="useTime"></result>
+    </resultMap>
 
     <select id="findUserById" resultType="com.yao.entity.UserInline">
         select * from tb_user_inline where id = #{id}
     </select>
-    <select id="findUserByIp" parameterType="java.lang.String" resultType="com.yao.entity.UserInline">
-        select * from tb_user_inline where ip = #{ip};
+    <select id="findUserByUserId" parameterType="java.lang.String" resultType="com.yao.entity.UserInline">
+        select * from tb_user_inline where user_id = #{userId};
     </select>
-    <select id="findUserByState" resultMap="userInline">
-        select * from tb_user_inline where state = #{state};
-    </select>
+
     <select id="findUserByCertified" resultMap="userInline">
-        select * from tb_user_inline where certified = #{certified};
+        select * from tb_user_inline where certified = #{certified} order by last_useTime desc ;
     </select>
+
     <select id="findAllUser" resultMap="userInline">
-        select * from tb_user_inline
+        select * from tb_user_inline order by last_useTime desc
     </select>
     <update id="updateUser">
         update tb_user_inline
         <set>
-            state = #{state},certified = #{certified}
+            <if test="version!=null">
+                version = #{version},
+            </if>
+            <if test="lastUseTime!=null">
+                last_useTime = #{lastUseTime},
+            </if>
+            <if test="certified!=null">
+                certified = #{certified}
+            </if>
         </set>
         <where>
-            ip = #{ip}
+            user_id = #{userId}
         </where>
     </update>
     <insert id="insertUser" parameterType="com.yao.test.TestUserInline">
-        insert into tb_user_inline(ip,state,certified) values (#{ip},#{state},#{certified})
+        insert into tb_user_inline(user_id,version,last_useTime,certified) values (#{userId},#{version},#{lastUseTime},#{certified})
+    </insert>
+
+    <select id="getUserUseTime" resultMap="usr_useTime">
+        select use_time from tb_user_useinfo where user_id = #{userId} order by use_time desc ;
+    </select>
+
+    <insert id="insertUseTime">
+        insert into tb_user_useinfo(user_id,use_time) values (#{userId},#{curTime})
     </insert>
 </mapper>

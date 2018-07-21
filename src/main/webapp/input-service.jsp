@@ -128,6 +128,8 @@
                     <div class="am-panel-bd">
                         <a class="option-a" href="#">输入法反馈</a>
                         <hr/>
+                        <a class="option-a" url = "${path}/ime/version_controll.jsp" href="#">版本控制</a>
+                        <hr/>
                         <a class="option-a" url = "${path}/group/groupFileManager.jsp" href="#" toPosition = "group/groupFileManager.jsp">词库管理</a>
                         <hr/>
                         <a class="option-a" href="#">广告管理</a>

@@ -3,6 +3,7 @@ package com.yao.service.impl;
 import com.yao.dao.UserInlineMapper;
 import com.yao.entity.UserInline;
 import com.yao.service.UserInlineService;
+import com.yao.utils.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,20 +22,14 @@ public class UserInlineServiceImpl implements UserInlineService {
     }
 
     @Override
-    public UserInline findUserByIp(String ip) {
-        UserInline userInline = mapper.findUserByIp(ip);
+    public UserInline findUserByUserId(String userId) {
+        UserInline userInline = mapper.findUserByUserId(userId);
         return userInline;
     }
 
     @Override
     public void updateUser(UserInline userInline) {
         mapper.updateUser(userInline);
-    }
-
-    @Override
-    public List<UserInline> findUserByState(int state) {
-        List<UserInline> userInlines = mapper.findUserByState(state);
-        return userInlines;
     }
 
     @Override
@@ -52,5 +47,21 @@ public class UserInlineServiceImpl implements UserInlineService {
     @Override
     public void registerUser(UserInline user) {
         mapper.insertUser(user);
+    }
+
+    /**
+     * 查找某个用户的所有时间
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<String> getUserUseTime(String userId) {
+        return mapper.getUserUseTime(userId);
+    }
+
+    @Override
+    public Integer insertUserUseTIme(String userId) {
+        String curTime = TimeUtils.dateToString();
+        return mapper.insertUseTime(userId,curTime);
     }
 }
