@@ -14,4 +14,5 @@ public interface UserInlineService {
 
     List<String>getUserUseTime(String userId);
     Integer insertUserUseTIme(String userId);
+
 }
